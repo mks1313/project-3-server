@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const ratingSchema = new Schema({
-  user: {
+  author: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -16,7 +16,7 @@ const ratingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Restaurant",
     required: true,
-  }
+  },
 });
 
 const Rating = model("Rating", ratingSchema);

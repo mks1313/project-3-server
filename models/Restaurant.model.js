@@ -52,6 +52,10 @@ const restaurantSchema = new Schema({
   ratings: [{
     type: Schema.Types.ObjectId,
     ref: 'Rating'
+  }],
+  likes: [{
+    type: Schema.Types.ObjectId,
+    ref: "User",
   }]
 });
 restaurantSchema.index({ location: '2dsphere' });

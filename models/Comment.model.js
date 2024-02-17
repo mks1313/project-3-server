@@ -4,11 +4,11 @@ const commentSchema = new Schema({
     author: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: false,
+      required: true,
     },
     content: {
       type: String,
-      required: false,
+      required: true,
     },
     restaurant: {
         type: Schema.Types.ObjectId,
