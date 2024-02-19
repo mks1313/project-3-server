@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const User = require("../models/User.model");
-const Comment = require("../models/Comment.model");
+// const Comment = require("../models/Comment.model");
 const Restaurant = require("../models/Restaurant.model");
 const Rating = ("../models/Rating.model.js");
+const fileUploader = require("../config/cloudinary.config");
 
 router.get('/read', (req, res) => {
     Restaurant.find()
@@ -30,8 +31,9 @@ router.get('/read/:id', (req, res) => {
     });
 });
 
-router.post('/create', (req, res) => {
-    const { name, capacity, image, location, price, description, category, city, postcode, owner } = req.body;
+router.post('/create', fileUploader.single('image'), (req, res) => {
+    const { name, capacity, location, price, description, category, city, postcode, owner } = req.body;
+    const image = req.file ? req.file.path : undefined;
     Restaurant.create({
       name,
       capacity,
@@ -52,9 +54,10 @@ router.post('/create', (req, res) => {
     });
   });
 
-  router.put('/update/:id', (req, res) => {
+  router.put('/update/:id', fileUploader.single('image'), (req, res) => {
     const restaurantId = req.params.id;
-    const { name, capacity, location, price, description, category, city, postcode, image } = req.body;
+    const { name, capacity, location, price, description, category, city, postcode } = req.body;
+    const image = req.file ? req.file.path : undefined;
     Restaurant.findByIdAndUpdate(restaurantId, {
         name,
         capacity,

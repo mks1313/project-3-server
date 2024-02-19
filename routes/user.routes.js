@@ -2,18 +2,24 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User.model");
 const { isAuthenticated } = require("./../middleware/jwt.middleware.js"); 
+const fileUploader = require("../config/cloudinary.config");
 
 
 router.get('/profile', isAuthenticated, (req, res, next) => {
     res.status(200).json({ user: req.payload });
 });
 
-// PUT /profile: 
-router.put('/profile', isAuthenticated, (req, res, next) => {
+
+router.put('/profile', isAuthenticated, fileUploader.single('profileImage'), (req, res, next) => {
     const userId = req.payload._id; 
     const { name, newPassword } = req.body;
 
-    User.findByIdAndUpdate(userId, { name, password: newPassword })
+    const updateFields = { name, password: newPassword };
+    if (req.file) {
+        updateFields.profileImage = req.file.path;
+    }
+
+    User.findByIdAndUpdate(userId, updateFields)
         .then(updatedUser => {
             if (!updatedUser) {
                 return res.status(404).json({ message: 'User not found' });
@@ -23,7 +29,7 @@ router.put('/profile', isAuthenticated, (req, res, next) => {
         .catch(err => res.status(500).json({ message: "Internal Server Error" }));
 });
 
-// DELETE 
+
 router.delete('/profile', isAuthenticated, (req, res, next) => {
     const userId = req.payload._id; 
 
