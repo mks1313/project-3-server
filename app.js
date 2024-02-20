@@ -28,8 +28,17 @@ app.use("/auth", authRoutes);
 const restaurantsRoutes = require("./routes/restaurants.routes");
 app.use("/restaurants", isAuthenticated, restaurantsRoutes);
 
-const userRoutes = require("./routes/user.routes");
-app.use("/user", isAuthenticated, userRoutes);
+const usersRoutes = require("./routes/users.routes");
+app.use("/users", isAuthenticated, usersRoutes);
+
+const ratingsRoutes = require("./routes/ratings.routes");
+app.use("/ratings", ratingsRoutes);
+
+const commentsRoutes = require("./routes/comments.routes");
+app.use("/comments", commentsRoutes);
+
+const likesRoutes = require("./routes/likes.routes");
+app.use("/likes", likesRoutes);
 
 
 

@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User.model");
-const { isAuthenticated } = require("./../middleware/jwt.middleware.js"); 
-const fileUploader = require("../config/cloudinary.config");
+const User = require("../models/User.model.js");
+const { isAuthenticated } = require("../middleware/jwt.middleware.js"); 
+const fileUploader = require("../config/cloudinary.config.js");
 
 
 router.get('/profile', isAuthenticated, (req, res, next) => {

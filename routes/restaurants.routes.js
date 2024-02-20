@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
-// const mongoose = require("mongoose");
 const User = require("../models/User.model");
-// const Comment = require("../models/Comment.model");
 const Restaurant = require("../models/Restaurant.model");
-const Rating = ("../models/Rating.model.js");
+const defaultImage = Restaurant.defaultImage;
 const fileUploader = require("../config/cloudinary.config");
 
 router.get('/read', (req, res) => {
@@ -33,7 +31,7 @@ router.get('/read/:id', (req, res) => {
 
 router.post('/create', fileUploader.single('image'), (req, res) => {
     const { name, capacity, location, price, description, category, city, postcode, owner } = req.body;
-    const image = req.file ? req.file.path : undefined;
+    const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
       name,
       capacity,
