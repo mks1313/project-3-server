@@ -4,6 +4,7 @@ const User = require("../models/User.model");
 const Restaurant = require("../models/Restaurant.model");
 const defaultImage = Restaurant.defaultImage;
 const fileUploader = require("../config/cloudinary.config");
+const { isAuthenticated } = require("./../middleware/jwt.middleware.js"); 
 
 router.get('/read', (req, res) => {
     Restaurant.find()
@@ -29,7 +30,7 @@ router.get('/read/:id', (req, res) => {
     });
 });
 
-router.post('/create', fileUploader.single('image'), (req, res) => {
+router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res) => {
     const { name, capacity, location, price, description, category, city, postcode, owner } = req.body;
     const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
@@ -52,7 +53,7 @@ router.post('/create', fileUploader.single('image'), (req, res) => {
     });
   });
 
-  router.put('/update/:id', fileUploader.single('image'), (req, res) => {
+  router.put('/update/:id', isAuthenticated, fileUploader.single('image'), (req, res) => {
     const restaurantId = req.params.id;
     const { name, capacity, location, price, description, category, city, postcode } = req.body;
     const image = req.file ? req.file.path : undefined;
@@ -78,7 +79,7 @@ router.post('/create', fileUploader.single('image'), (req, res) => {
     });
 });
 
-router.delete('/delete/:id', (req, res) => {
+router.delete('/delete/:id', isAuthenticated, (req, res) => {
     const restaurantId = req.params.id;
     Restaurant.findByIdAndDelete(restaurantId)
     .then(deletedRestaurant => {
