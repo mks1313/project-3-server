@@ -31,7 +31,7 @@ router.get('/read/:id', (req, res) => {
 });
 
 router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res) => {
-    const { name, capacity, location, price, description, category, city, postcode, owner } = req.body;
+    const { name, capacity, location, price, description, category, city, postcode, owner, phone } = req.body;
     const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
       name,
@@ -43,7 +43,8 @@ router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res)
       city,
       postcode,
       owner,
-      image
+      image,
+      phone
     })
     .then(newRestaurant => {
       res.status(201).json(newRestaurant);
@@ -55,7 +56,7 @@ router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res)
 
   router.put('/update/:id', isAuthenticated, fileUploader.single('image'), (req, res) => {
     const restaurantId = req.params.id;
-    const { name, capacity, location, price, description, category, city, postcode } = req.body;
+    const { name, capacity, location, price, description, category, city, postcode, phone } = req.body;
     const image = req.file ? req.file.path : undefined;
     Restaurant.findByIdAndUpdate(restaurantId, {
         name,
@@ -66,7 +67,8 @@ router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res)
         category,
         city,
         postcode,
-        image
+        image, 
+        phone
     }, { new: true })
     .then(updatedRestaurant => {
         if (!updatedRestaurant) {
