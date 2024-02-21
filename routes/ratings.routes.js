@@ -102,7 +102,6 @@ router.post("/", isAuthenticated, (req, res) => {
         if (!updatedRating) {
           return res.status(404).json({ message: "Rating not found" });
         }
-        // Actualizar el conjunto ratedByUsers con el usuario correspondiente
         Rating.findByIdAndUpdate(ratingId, {
           $addToSet: { ratedByUsers: req.payload._id },
         })

@@ -37,8 +37,8 @@ app.use("/ratings", ratingsRoutes);
 const commentsRoutes = require("./routes/comments.routes");
 app.use("/comments", commentsRoutes);
 
-const likesRoutes = require("./routes/likes.routes");
-app.use("/likes", likesRoutes);
+const favoritesRoutes = require("./routes/favorites.routes");
+app.use("/favorites", favoritesRoutes);
 
 
 

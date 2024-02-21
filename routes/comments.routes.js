@@ -5,8 +5,10 @@ const Restaurant = require("../models/Restaurant.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware.js"); 
 
 
-router.get("/", isAuthenticated, (req, res) => {
-  Comment.find()
+router.get("/:restaurantId", isAuthenticated, (req, res) => {
+  const { restaurantId } = req.params;
+
+  Comment.find({ restaurant: restaurantId })
     .then((comments) => {
       res.status(200).json(comments);
     })

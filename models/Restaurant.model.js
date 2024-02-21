@@ -63,7 +63,7 @@ const restaurantSchema = new Schema({
             ref: "Rating",
         },
     ],
-    likes: [
+    favorites: [
         {
             type: Schema.Types.ObjectId,
             ref: "User",
@@ -80,7 +80,7 @@ const restaurantSchema = new Schema({
         ref: 'User'
     }],
     
-    likedByUsers: [{
+    favoritesByUsers: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
     }]
