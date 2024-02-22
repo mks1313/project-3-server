@@ -4,7 +4,7 @@ const User = require("../models/User.model.js");
 const Restaurant = require("../models/Restaurant.model.js");
 const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 
-router.post("/:restaurantId", isAuthenticated, (req, res) => {
+router.post("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
   const userId = req.payload._id;
 
@@ -43,7 +43,7 @@ router.post("/:restaurantId", isAuthenticated, (req, res) => {
 });
 
 
-router.delete("/:restaurantId", isAuthenticated, (req, res) => {
+router.delete("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
   const userId = req.payload._id;
 

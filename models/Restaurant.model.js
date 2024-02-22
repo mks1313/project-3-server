@@ -87,7 +87,11 @@ const restaurantSchema = new Schema({
     favoritesByUsers: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    menus: [{
+        type: Schema.Types.ObjectId,
+        ref: "Menu",
+      }]  
 });
 
 restaurantSchema.index({ location: "2dsphere" });

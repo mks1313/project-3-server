@@ -5,12 +5,12 @@ const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 const fileUploader = require("../config/cloudinary.config.js");
 
 
-router.get('/profile', isAuthenticated, (req, res, next) => {
+router.get('/profile', (req, res, next) => {
     res.status(200).json({ user: req.payload });
 });
 
 
-router.put('/profile', isAuthenticated, fileUploader.single('profileImage'), (req, res, next) => {
+router.put('/profile', fileUploader.single('profileImage'), (req, res, next) => {
     const userId = req.payload._id; 
     const { name, newPassword } = req.body;
 
@@ -30,7 +30,7 @@ router.put('/profile', isAuthenticated, fileUploader.single('profileImage'), (re
 });
 
 
-router.delete('/profile', isAuthenticated, (req, res, next) => {
+router.delete('/profile', (req, res, next) => {
     const userId = req.payload._id; 
 
     User.findByIdAndDelete(userId)

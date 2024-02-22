@@ -4,7 +4,7 @@ const Rating = require("../models/Rating.model");
 const Restaurant = require("../models/Restaurant.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 
-router.get("/:restaurantId", isAuthenticated, (req, res) => {
+router.get("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
 
   Rating.find({ restaurant: restaurantId })
@@ -30,7 +30,7 @@ router.get("/:restaurantId", isAuthenticated, (req, res) => {
     });
 });
 
-router.post("/", isAuthenticated, (req, res) => {
+router.post("/", (req, res) => {
     const { author, value, restaurant } = req.body;
   
     Rating.findOne({ author, restaurant })
@@ -93,7 +93,7 @@ router.post("/", isAuthenticated, (req, res) => {
       });
   });
   
-  router.put("/:ratingId", isAuthenticated, (req, res) => {
+  router.put("/:ratingId", (req, res) => {
     const { value } = req.body;
     const { ratingId } = req.params;
   
@@ -117,7 +117,7 @@ router.post("/", isAuthenticated, (req, res) => {
       });
   });
   
-  router.delete("/:ratingId", isAuthenticated, (req, res) => {
+  router.delete("/:ratingId",(req, res) => {
     const { ratingId } = req.params;
   
     Rating.findByIdAndDelete(ratingId)

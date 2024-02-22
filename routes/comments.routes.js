@@ -5,7 +5,7 @@ const Restaurant = require("../models/Restaurant.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware.js"); 
 
 
-router.get("/:restaurantId", isAuthenticated, (req, res) => {
+router.get("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
 
   Comment.find({ restaurant: restaurantId })
@@ -17,7 +17,7 @@ router.get("/:restaurantId", isAuthenticated, (req, res) => {
     });
 });
 
-router.post("/", isAuthenticated, (req, res) => {
+router.post("/", (req, res) => {
   const { author, content, restaurant } = req.body;
 
   Comment.findOne({ author, restaurant })
@@ -61,7 +61,7 @@ router.post("/", isAuthenticated, (req, res) => {
 });
 
 
-router.put("/:commentId", isAuthenticated, (req, res) => {
+router.put("/:commentId", (req, res) => {
   const { content, restaurantId } = req.body;
   const { commentId } = req.params;
 
@@ -85,7 +85,7 @@ router.put("/:commentId", isAuthenticated, (req, res) => {
     });
 });
 
-router.delete("/:commentId", isAuthenticated, (req, res) => {
+router.delete("/:commentId", (req, res) => {
   Comment.findByIdAndDelete(req.params.commentId)
     .then(deletedComment => {
       if (!deletedComment) {

@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User.model");
 const Restaurant = require("../models/Restaurant.model");
 const defaultImage = Restaurant.defaultImage;
 const fileUploader = require("../config/cloudinary.config");
@@ -29,8 +28,8 @@ router.get('/read/:id', (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     });
 });
-
-router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res) => {
+// ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
+router.post('/create', fileUploader.single('image'), (req, res) => {
     const { name, capacity, location, price, description, category, city, postcode, owner, phone } = req.body;
     const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
@@ -54,7 +53,7 @@ router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res)
     });
   });
 
-  router.put('/update/:id', isAuthenticated, fileUploader.single('image'), (req, res) => {
+  router.put('/update/:id', fileUploader.single('image'), (req, res) => {
     const restaurantId = req.params.id;
     const { name, capacity, location, price, description, category, city, postcode, phone } = req.body;
     const image = req.file ? req.file.path : undefined;
@@ -81,7 +80,7 @@ router.post('/create', isAuthenticated, fileUploader.single('image'), (req, res)
     });
 });
 
-router.delete('/delete/:id', isAuthenticated, (req, res) => {
+router.delete('/delete/:id', (req, res) => {
     const restaurantId = req.params.id;
     Restaurant.findByIdAndDelete(restaurantId)
     .then(deletedRestaurant => {
