@@ -11,10 +11,10 @@ const restaurantSchema = new Schema({
         type: Number,
         required: false,
     },
-    image: {
+    image: [{
         type: String,
         default: defaultImage,
-    },
+    }],
     location: {
         type: {
             type: String,
@@ -91,7 +91,15 @@ const restaurantSchema = new Schema({
     menus: [{
         type: Schema.Types.ObjectId,
         ref: "Menu",
-      }]  
+      }],
+      openingHours: {
+        type: [{
+          day: { type: String, enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] },
+          open: { type: String }, 
+          close: { type: String }, 
+        }],
+        required: false,
+      },  
 });
 
 restaurantSchema.index({ location: "2dsphere" });

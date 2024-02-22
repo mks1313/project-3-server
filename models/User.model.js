@@ -8,7 +8,6 @@ const userSchema = new Schema(
     name: {
       type: String,
       required: false,
-      unique: true,
       trim: true,
     },
     email: {
@@ -33,9 +32,11 @@ const userSchema = new Schema(
     sex: {
       type: String,
       enum: ["male", "female", "N/A"], // Define los valores permitidos
+      default: "N/A",
     },
-    dateOfBirth: {
+    birthday: {
       type: Date,
+      default: Date.now,
     },
     restaurant: {
       type: Schema.Types.ObjectId,

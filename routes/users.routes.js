@@ -5,16 +5,16 @@ const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 const fileUploader = require("../config/cloudinary.config.js");
 
 
-router.get('/profile', (req, res, next) => {
+router.get('/profile', isAuthenticated, (req, res, next) => {
     res.status(200).json({ user: req.payload });
 });
 
 
-router.put('/profile', fileUploader.single('profileImage'), (req, res, next) => {
+router.put('/profile', isAuthenticated, fileUploader.single('profileImage'), (req, res, next) => {
     const userId = req.payload._id; 
-    const { name, newPassword } = req.body;
+    const { name, newPassword, birthday, sex } = req.body;
 
-    const updateFields = { name, password: newPassword };
+    const updateFields = { name, birthday, sex, password: newPassword };
     if (req.file) {
         updateFields.profileImage = req.file.path;
     }

@@ -30,7 +30,7 @@ router.get('/read/:id', (req, res) => {
 });
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post('/create', fileUploader.single('image'), (req, res) => {
-    const { name, capacity, location, price, description, category, city, postcode, owner, phone } = req.body;
+    const { name, capacity, location, price, description, category, city, postcode, owner, phone, openingHours } = req.body;
     const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
       name,
@@ -43,7 +43,7 @@ router.post('/create', fileUploader.single('image'), (req, res) => {
       postcode,
       owner,
       image,
-      phone
+      phone, openingHours
     })
     .then(newRestaurant => {
       res.status(201).json(newRestaurant);
@@ -55,7 +55,7 @@ router.post('/create', fileUploader.single('image'), (req, res) => {
 
   router.put('/update/:id', fileUploader.single('image'), (req, res) => {
     const restaurantId = req.params.id;
-    const { name, capacity, location, price, description, category, city, postcode, phone } = req.body;
+    const { name, capacity, location, price, description, category, city, postcode, phone, openingHours } = req.body;
     const image = req.file ? req.file.path : undefined;
     Restaurant.findByIdAndUpdate(restaurantId, {
         name,
@@ -67,7 +67,8 @@ router.post('/create', fileUploader.single('image'), (req, res) => {
         city,
         postcode,
         image, 
-        phone
+        phone,
+        openingHours
     }, { new: true })
     .then(updatedRestaurant => {
         if (!updatedRestaurant) {
