@@ -29,9 +29,9 @@ router.get('/read/:id', (req, res) => {
     });
 });
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
-router.post('/create', fileUploader.single('image'), (req, res) => {
-    const { name, capacity, location, price, description, category, city, postcode, owner, phone, openingHours } = req.body;
-    const image = req.file ? req.file.path : defaultImage;
+router.post('/create', (req, res) => {
+    const { name, capacity, location, price, description, category, city, postcode, owner, phone, image, openingHours } = req.body;
+    // const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
       name,
       capacity,
@@ -52,11 +52,11 @@ router.post('/create', fileUploader.single('image'), (req, res) => {
       res.status(400).json({ message: error.message });
     });
   });
-
-  router.put('/update/:id', fileUploader.single('image'), (req, res) => {
+//   fileUploader.single('image') para cloudinary en la ruta!!!
+  router.put('/update/:id', (req, res) => {
     const restaurantId = req.params.id;
-    const { name, capacity, location, price, description, category, city, postcode, phone, openingHours } = req.body;
-    const image = req.file ? req.file.path : undefined;
+    const { name, capacity, location, price, description, category, city, postcode, phone, image, openingHours } = req.body;
+
     Restaurant.findByIdAndUpdate(restaurantId, {
         name,
         capacity,
