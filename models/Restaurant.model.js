@@ -29,6 +29,24 @@ const restaurantSchema = new Schema({
       required: false,
     },
   },
+  address: {
+    street: {
+      type: String,
+      required: true,
+    },
+    number: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    postcode: {
+      type: String,
+      required: false,
+    },
+  },
   phone: {
     type: Number,
     require: false,
@@ -70,14 +88,6 @@ const restaurantSchema = new Schema({
     ],
     default: "other",
     required: true,
-  },
-  city: {
-    type: String,
-    required: true,
-  },
-  postcode: {
-    type: String,
-    required: false,
   },
   owner: {
     type: Schema.Types.ObjectId,

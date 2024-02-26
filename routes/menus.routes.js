@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Menu = require("../models/Menu.model.js");
 const Restaurant = require("../models/Restaurant.model.js");
-const { isAuthenticated } = require("../middleware/jwt.middleware.js"); 
+const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 
 // Obtener todos los menús
 router.get("/readall", (req, res) => {
@@ -31,20 +31,26 @@ router.post("/create", (req, res) => {
     description,
     name,
     price,
-    category
-  })
+    category,
+  });
 
   menu
     .save()
-    .then(newMenu => {
-      // Después de guardar el menú, agregar su ID al array de menús en el restaurante
-      return Restaurant.findByIdAndUpdate(req.body.restaurant, {
-        $addToSet: { menus: newMenu._id },
-      })
-        .then(() => res.status(201).json(newMenu))
-        .catch((err) => res.status(500).json({ message: err.message }));
+    .then((newMenu) => {
+
+      return Restaurant.findByIdAndUpdate(
+        req.body.restaurant,
+        { $addToSet: { menus: newMenu._id } },
+        { new: true }
+      );
     })
-    .catch((err) => res.status(400).json({ message: err.message }));
+    .then((updatedRestaurant) => {
+      res.status(201).json(updatedRestaurant);
+    })
+    .catch((err) => {
+      console.error("Error al crear el menú:", err);
+      res.status(500).json({ message: err.message });
+    });
 });
 
 // Actualizar un menú existente

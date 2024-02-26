@@ -30,12 +30,13 @@ router.get('/read/:id', (req, res) => {
 });
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post('/create', (req, res) => {
-    const { name, capacity, location, price, description, category, city, postcode, owner, phone, image, openingHours } = req.body;
+    const { name, capacity, location, address, price, description, category, city, postcode, owner, phone, image, openingHours } = req.body;
     // const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
       name,
       capacity,
       location,
+      address,
       price,
       description,
       category,
@@ -43,7 +44,8 @@ router.post('/create', (req, res) => {
       postcode,
       owner,
       image,
-      phone, openingHours
+      phone, 
+      openingHours,
     })
     .then(newRestaurant => {
       res.status(201).json(newRestaurant);
@@ -55,12 +57,13 @@ router.post('/create', (req, res) => {
 //   fileUploader.single('image') para cloudinary en la ruta!!!
   router.put('/update/:id', (req, res) => {
     const restaurantId = req.params.id;
-    const { name, capacity, location, price, description, category, city, postcode, phone, image, openingHours } = req.body;
+    const { name, capacity, location, address, price, description, category, city, postcode, phone, image, openingHours } = req.body;
 
     Restaurant.findByIdAndUpdate(restaurantId, {
         name,
         capacity,
         location,
+        address,
         price,
         description,
         category,
