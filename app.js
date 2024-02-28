@@ -26,22 +26,22 @@ const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
 const restaurantsRoutes = require("./routes/restaurants.routes");
-app.use("/restaurants", restaurantsRoutes);
+app.use("/restaurants", isAuthenticated, restaurantsRoutes);
 
 const usersRoutes = require("./routes/users.routes");
-app.use("/users", usersRoutes);
+app.use("/users", isAuthenticated, usersRoutes);
 
 const ratingsRoutes = require("./routes/ratings.routes");
-app.use("/ratings", ratingsRoutes);
+app.use("/ratings", isAuthenticated, ratingsRoutes);
 
 const commentsRoutes = require("./routes/comments.routes");
-app.use("/comments", commentsRoutes);
+app.use("/comments", isAuthenticated, commentsRoutes);
 
 const menusRoutes = require("./routes/menus.routes");
-app.use("/menus", menusRoutes);
+app.use("/menus", isAuthenticated, menusRoutes);
 
 const favoritesRoutes = require("./routes/favorites.routes");
-app.use("/favorites", favoritesRoutes);
+app.use("/favorites", isAuthenticated, favoritesRoutes);
 
 
 

@@ -30,7 +30,9 @@ router.get('/read/:id', (req, res) => {
 });
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post('/create', (req, res) => {
-    const { name, capacity, location, address, price, description, category, city, postcode, owner, phone, image, openingHours } = req.body;
+    const owner = req.payload._id;
+    console.log(req.payload._id);
+    const { name, capacity, location, address, price, description, category, city, postcode, phone, image, openingHours } = req.body;
     // const image = req.file ? req.file.path : defaultImage;
     Restaurant.create({
       name,
@@ -42,14 +44,16 @@ router.post('/create', (req, res) => {
       category,
       city,
       postcode,
-      owner,
       image,
       phone, 
       openingHours,
+      owner,
     })
     .then(newRestaurant => {
+     // TODO implementar la logica de asosiacion de nuevo id de rest a usuario, para guardar los datos en el ususario!!!!!!!!!!
       res.status(201).json(newRestaurant);
     })
+
     .catch(error => {
       res.status(400).json({ message: error.message });
     });
