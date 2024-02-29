@@ -10,13 +10,28 @@ router.get('/profile', isAuthenticated, (req, res, next) => {
 });
 
 
-router.put('/profile', isAuthenticated, fileUploader.single('profileImage'), (req, res, next) => {
+router.put('/profile', isAuthenticated, (req, res, next) => {
     const userId = req.payload._id; 
-    const { name, newPassword, birthday, sex } = req.body;
+    const { name, email, newPassword, confirmPassword, birthday,image, isOwner, sex } = req.body;
 
-    const updateFields = { name, birthday, sex, password: newPassword };
-    if (req.file) {
-        updateFields.profileImage = req.file.path;
+    // Verificar si newPassword y confirmPassword coinciden
+    if (newPassword && newPassword !== confirmPassword) {
+        return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    const updateFields = {};
+    
+    // Agregar los campos que se proporcionaron en la solicitud
+    if (name) updateFields.name = name;
+    if (email) updateFields.email = email;
+    if (birthday) updateFields.birthday = birthday;
+    if (isOwner !== undefined) updateFields.isOwner = isOwner;
+    if (sex) updateFields.sex = sex;
+    if (newPassword) updateFields.password = newPassword;
+    // Actualizar la imagen de perfil si se proporciona
+     else {
+        // Si no se proporciona una nueva imagen, usar la imagen por defecto
+        updateFields.profileImage = User.defaultImageURL; // Asigna la URL de la imagen por defecto
     }
 
     User.findByIdAndUpdate(userId, updateFields)
@@ -28,6 +43,8 @@ router.put('/profile', isAuthenticated, fileUploader.single('profileImage'), (re
         })
         .catch(err => res.status(500).json({ message: "Internal Server Error" }));
 });
+
+
 
 
 router.delete('/profile', (req, res, next) => {

@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Menu = require("../models/Menu.model.js");
 const Restaurant = require("../models/Restaurant.model.js");
-const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 
 // Obtener todos los menús
 router.get("/readall", (req, res) => {

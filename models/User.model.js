@@ -31,17 +31,17 @@ const userSchema = new Schema(
     },
     sex: {
       type: String,
-      enum: ["male", "female", "N/A"], // Define los valores permitidos
+      enum: ["male", "female", "N/A"], 
       default: "N/A",
     },
     birthday: {
       type: Date,
       default: Date.now,
     },
-    restaurant: {
+    restaurant: [{
       type: Schema.Types.ObjectId,
       ref: "Restaurant",
-    },
+    }],
     favorites: [{
       type: Schema.Types.ObjectId,
       ref: "Restaurant",

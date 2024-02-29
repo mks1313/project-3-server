@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const defaultImage =
-  "https://media.istockphoto.com/id/981368726/es/vector/restaurante-de-comida-y-bebidas-logotipo-tenedor-cuchillo-fondo-vector-imagen.webp?s=1024x1024&w=is&k=20&c=Bjj0FOP-mRYpC4LEfsUQkBal019IdmkKjqk2K3ihQJo=";
+  "https://www.creativefabrica.com/wp-content/uploads/2020/03/09/Simple-Fork-Plate-Icon-Restaurant-Logo-Graphics-3446203-1-1-580x348.jpg";
 
 const restaurantSchema = new Schema({
   name: {
@@ -12,12 +12,12 @@ const restaurantSchema = new Schema({
     type: Number,
     required: false,
   },
-  image: [
+  image: 
     {
       type: String,
       default: defaultImage,
     },
-  ],
+  
   location: {
     type: {
       type: String,

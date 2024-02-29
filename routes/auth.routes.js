@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const User = require("../models/User.model");
 const { isAuthenticated } = require("./../middleware/jwt.middleware.js"); 
+const Restaurant = require("../models/Restaurant.model.js");
+
 
 
 router.post('/signup', (req, res, next) => {
@@ -27,28 +29,33 @@ router.post('/signup', (req, res, next) => {
       return;
     }
    
-    User.findOne({ email })
-      .then((foundUser) => {
-        if (foundUser) {
-          res.status(400).json({ message: "User already exists." });
-          return;
-        }
-   
-        const salt = bcrypt.genSaltSync(saltRounds);
-        const hashedPassword = bcrypt.hashSync(password, salt);
+    User.findOne({ email: req.body.email })
+    .then((foundUser) => {
+      
+      if (foundUser) {
+        return res.status(400).json({ message: "User already exists." });
+      }
   
-        return User.create({ email, password: hashedPassword, name });
-      })
-      .then((createdUser) => {
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+      
+      return User.create({
+        email: req.body.email,
+        password: hashedPassword,
+        name: req.body.name,
+        profileImage: User.defaultImage,
+        restaurant: req.body.restaurant,
+      }).then((createdUser) => {
         const { email, name, _id } = createdUser;
         const user = { email, name, _id };
-   
-        res.status(201).json({ user: user });
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({ message: "Internal Server Error" })
+        return res.status(201).json({ user });
       });
+  
+    })
+    .catch(error => {
+      console.log(error);
+      return res.status(500).json({ error });
+    });
   });
 
 router.post('/login', (req, res, next) => {

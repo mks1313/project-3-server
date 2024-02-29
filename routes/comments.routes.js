@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Comment = require("../models/Comment.model");
 const Restaurant = require("../models/Restaurant.model");
-const { isAuthenticated } = require("../middleware/jwt.middleware.js"); 
 
 
 router.get("/:restaurantId", (req, res) => {
