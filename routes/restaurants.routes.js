@@ -28,7 +28,7 @@ router.get("/read/:id", (req, res) => {
     });
 });
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
-router.post("/create", (req, res) => {
+router.post("/create", fileUploader.single("image"), (req, res) => {
     const owner = req.payload._id;
     const {
       name,
@@ -44,6 +44,8 @@ router.post("/create", (req, res) => {
       phone,
       openingHours,
     } = req.body;
+    //console.log(req.body);
+    
   
     // Crear el restaurante
     Restaurant.create({
