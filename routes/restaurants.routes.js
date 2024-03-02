@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Restaurant = require("../models/Restaurant.model");
-const defaultImage = Restaurant.defaultImage;
 const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model")
 
@@ -31,7 +30,6 @@ router.get("/read/:id", (req, res) => {
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post("/create", (req, res) => {
     const owner = req.payload._id;
-    console.log(req.payload._id);
     const {
       name,
       capacity,
@@ -47,6 +45,7 @@ router.post("/create", (req, res) => {
       openingHours,
     } = req.body;
   
+    // Crear el restaurante
     Restaurant.create({
       name,
       capacity,
@@ -64,11 +63,14 @@ router.post("/create", (req, res) => {
     })
       .then((newRestaurant) => {
         const restaurantId = newRestaurant._id;
-        // Asociar el nuevo restaurante con el usuario propietario
+        // Asociar el nuevo restaurante con el usuario propietario y actualizar el usuario
         User.findByIdAndUpdate(
           owner,
-          { $push: { restaurants: restaurantId } }, // Agregar el ID del restaurante a la lista de restaurantes del usuario
-          { new: true } // Devolver el documento actualizado del usuario
+          {
+            $addToSet: { restaurant: restaurantId }, // Agregar el ID del restaurante a la lista de restaurantes del usuario
+            $set: { isOwner: true } // Actualizar el campo isOwner a true si no lo era antes
+          },
+          { new: true } 
         )
           .then((updatedUser) => {
             if (!updatedUser) {
@@ -84,6 +86,7 @@ router.post("/create", (req, res) => {
         res.status(400).json({ message: error.message });
       });
   });
+
 router.delete("/delete/:id", (req, res) => {
   const restaurantId = req.params.id;
   Restaurant.findByIdAndDelete(restaurantId)
