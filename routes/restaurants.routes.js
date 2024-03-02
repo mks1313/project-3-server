@@ -15,18 +15,33 @@ router.get("/read", (req, res) => {
 });
 
 router.get("/read/:id", (req, res) => {
-  const restaurantId = req.params.id;
-  Restaurant.findById(restaurantId)
-    .then((restaurant) => {
-      if (!restaurant) {
-        return res.status(404).json({ message: "Restaurante no encontrado" });
-      }
-      res.status(200).json(restaurant);
-    })
-    .catch((error) => {
-      res.status(500).json({ message: "Internal Server Error" });
-    });
-});
+    const restaurantId = req.params.id;
+    Restaurant.findById(restaurantId)
+      .then((restaurant) => {
+        if (!restaurant) {
+          return res.status(404).json({ message: "Restaurante no encontrado" });
+        }
+        
+        const canEdit = () => {
+          if (restaurant.owner === req.payload._id) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        // TODO revisar logica oara acabar permisos de editar o eliminar el evento. 
+        const restaurantWithPermissions = {
+          ...restaurant.toObject(), 
+          canEdit: canEdit() 
+        };
+  
+        res.status(200).json(restaurantWithPermissions); 
+      })
+      .catch((error) => {
+        res.status(500).json({ message: "Internal Server Error" });
+      });
+  });
+  
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post("/create", fileUploader.single("image"), (req, res) => {
     const owner = req.payload._id;
@@ -88,6 +103,30 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
         res.status(400).json({ message: error.message });
       });
   });
+
+  router.put('/update/:id', (req, res) => {
+    const restaurantId = req.params.id;
+    const { name, capacity, price, description, category, city, postcode, image } = req.body;
+    Restaurant.findByIdAndUpdate(restaurantId, {
+        name,
+        capacity,       
+        price,
+        description,
+        category,
+        city,
+        postcode,
+        image
+    }, { new: true })
+    .then(updatedRestaurant => {
+        if (!updatedRestaurant) {
+            return res.status(404).json({ message: 'Restaurante no encontrado' });
+        }
+        res.status(200).json(updatedRestaurant);
+    })
+    .catch(error => {
+        res.status(500).json({ message: "Internal Server Error" });
+    });
+});
 
 router.delete("/delete/:id", (req, res) => {
   const restaurantId = req.params.id;
