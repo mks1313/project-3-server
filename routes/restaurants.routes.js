@@ -5,42 +5,39 @@ const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model")
 
 router.get("/read", (req, res) => {
-  Restaurant.find()
-    .then((restaurants) => {
-      res.status(200).json(restaurants);
-    })
-    .catch((error) => {
-      res.status(500).json({ message: "Internal Server Error" });
-    });
-});
-
-router.get("/read/:id", (req, res) => {
-    const restaurantId = req.params.id;
-    Restaurant.findById(restaurantId)
-      .then((restaurant) => {
-        if (!restaurant) {
-          return res.status(404).json({ message: "Restaurante no encontrado" });
-        }
-        
-        const canEdit = () => {
-          if (restaurant.owner === req.payload._id) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-        // TODO revisar logica oara acabar permisos de editar o eliminar el evento. 
-        const restaurantWithPermissions = {
-          ...restaurant.toObject(), 
-          canEdit: canEdit() 
-        };
+    const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
+    const query = q ? { name: { $regex: new RegExp(q, "i") } } : {}; // Crear la consulta dinámica
   
-        res.status(200).json(restaurantWithPermissions); 
+    Restaurant.find(query)
+      .then((restaurants) => {
+        res.status(200).json(restaurants);
       })
       .catch((error) => {
         res.status(500).json({ message: "Internal Server Error" });
       });
   });
+
+router.get('/read/:id', (req, res, next) => {
+    const restaurantId = req.params.id;
+  
+    Restaurant.findById(restaurantId)
+      .populate('owner', '_id') 
+      .then((restaurant) => {
+        if (!restaurant) {
+          return res.status(404).json({ message: "Restaurante no encontrado" });
+        }
+        const restaurantWithOwner = {
+          ...restaurant.toObject(),
+          owner: restaurant.owner._id 
+        };
+  
+        res.status(200).json(restaurantWithOwner);
+      })
+      .catch((error) => {
+        res.status(500).json({ message: "Internal Server Error" });
+      });
+  });
+  
   
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post("/create", fileUploader.single("image"), (req, res) => {
