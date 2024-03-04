@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Restaurant = require("../models/Restaurant.model");
 const fileUploader = require("../config/cloudinary.config");
+const User = require("../models/User.model")
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 const User = require("../models/User.model");
 
 router.get("/read", (req, res) => {
@@ -109,6 +111,24 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     });
 });
 
+  router.put('/update/:id', isAuthenticated, (req, res) => {
+    const restaurantId = req.params.id;
+    const { name, capacity, price, description, category, city, postcode, image } = req.body;
+    Restaurant.findByIdAndUpdate(restaurantId, {
+        name,
+        capacity,       
+        price,
+        description,
+        category,
+        city,
+        postcode,
+        image
+    }, { new: true })
+    .then(updatedRestaurant => {
+        if (!updatedRestaurant) {
+            return res.status(404).json({ message: 'Restaurante no encontrado' });
+        }
+        res.status(200).json(updatedRestaurant);
 router.put("/update/:id", (req, res) => {
   const restaurantId = req.params.id;
   const {
@@ -146,7 +166,7 @@ router.put("/update/:id", (req, res) => {
     });
 });
 
-router.delete("/delete/:id", (req, res) => {
+router.delete("/delete/:id", isAuthenticated, (req, res) => {
   const restaurantId = req.params.id;
   Restaurant.findByIdAndDelete(restaurantId)
     .then((deletedRestaurant) => {
