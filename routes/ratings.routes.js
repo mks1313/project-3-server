@@ -2,14 +2,15 @@ const express = require("express");
 const router = express.Router();
 const Rating = require("../models/Rating.model");
 const Restaurant = require("../models/Restaurant.model");
-const { isAuthenticated } = require("../middleware/jwt.middleware");
+const User = require("../models/User.model");
 
 // GET: Obtiene todas las valoraciones de un restaurante específico
 router.get("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
-
+  
   Rating.find({ restaurant: restaurantId })
     .then((ratings) => {
+   
       if (!ratings || ratings.length === 0) {
         return res
           .status(404)
@@ -32,29 +33,39 @@ router.get("/:restaurantId", (req, res) => {
 });
 
 // POST: Crea una nueva valoración
-router.post("/", isAuthenticated, (req, res) => {
+router.post("/rate", (req, res) => {
   const { value, restaurant } = req.body;
-  const author = req.payload.userId; // Accediendo al ID del usuario autenticado
-
-  Rating.findOne({ author, restaurant })
+  const authorId = req.payload; 
+   console.log(authorId);
+  Rating.findOne({ author: authorId, restaurant: restaurant })
     .then((existingRating) => {
       if (existingRating) {
-        return Rating.findByIdAndUpdate(
-          existingRating._id,
-          { value },
-          { new: true }
-        )
-          .then((updatedRating) => {
-            res.status(200).json(updatedRating);
-          })
-          .catch((error) => {
-            res.status(500).json({ message: error.message });
-          });
+        return res.status(400).json({ message: "El usuario ya ha valorado este restaurante" });
       } else {
-        Rating.create({ author, value, restaurant })
+        Rating.create({ author: authorId, value, restaurant })
           .then((newRating) => {
-            // Lógica adicional aquí si es necesario
-            res.status(201).json(newRating);
+            Restaurant.findByIdAndUpdate(
+              restaurant,
+              { $push: { ratings: newRating._id } },
+              { new: true }
+            )
+              .then(() => {
+         
+                User.findByIdAndUpdate(
+                  authorId,
+                  { $push: { ratings: newRating._id } },
+                  { new: true }
+                )
+                  .then(() => {
+                    res.status(201).json(newRating);
+                  })
+                  .catch((error) => {
+                    res.status(500).json({ message: error.message });
+                  });
+              })
+              .catch((error) => {
+                res.status(500).json({ message: error.message });
+              });
           })
           .catch((error) => {
             res.status(500).json({ message: error.message });
@@ -65,9 +76,10 @@ router.post("/", isAuthenticated, (req, res) => {
       res.status(500).json({ message: error.message });
     });
 });
-//TODO terminar con la logica de ratings
+
+
 // PUT: Actualiza una valoración existente
-router.put("/:ratingId", isAuthenticated, (req, res) => {
+router.put("/update/:ratingId", (req, res) => {
   const { value } = req.body;
   const { ratingId } = req.params;
 
@@ -76,7 +88,6 @@ router.put("/:ratingId", isAuthenticated, (req, res) => {
       if (!updatedRating) {
         return res.status(404).json({ message: "Rating not found" });
       }
-      // Lógica adicional aquí si es necesario
       res.status(200).json(updatedRating);
     })
     .catch((error) => {
@@ -85,7 +96,7 @@ router.put("/:ratingId", isAuthenticated, (req, res) => {
 });
 
 // DELETE: Elimina una valoración existente
-router.delete("/:ratingId", isAuthenticated, (req, res) => {
+router.delete("/delete/:ratingId", (req, res) => {
   const { ratingId } = req.params;
 
   Rating.findByIdAndDelete(ratingId)
@@ -93,8 +104,25 @@ router.delete("/:ratingId", isAuthenticated, (req, res) => {
       if (!deletedRating) {
         return res.status(404).json({ message: "Rating not found" });
       }
-      // Lógica adicional aquí si es necesario
-      res.status(200).json({ message: "Rating deleted successfully" });
+      Restaurant.findByIdAndUpdate(
+        deletedRating.restaurant,
+        { $pull: { ratings: ratingId } }
+      )
+        .then(() => {
+          User.findByIdAndUpdate(
+            deletedRating.author,
+            { $pull: { ratings: ratingId } }
+          )
+            .then(() => {
+              res.status(200).json({ message: "Rating deleted successfully" });
+            })
+            .catch((error) => {
+              res.status(500).json({ message: error.message });
+            });
+        })
+        .catch((error) => {
+          res.status(500).json({ message: error.message });
+        });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });
@@ -102,5 +130,6 @@ router.delete("/:ratingId", isAuthenticated, (req, res) => {
 });
 
 module.exports = router;
+
 
 

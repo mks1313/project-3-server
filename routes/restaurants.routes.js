@@ -3,6 +3,7 @@ const router = express.Router();
 const Restaurant = require("../models/Restaurant.model");
 const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model")
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 router.get("/read", (req, res) => {
     const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
@@ -101,7 +102,7 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
       });
   });
 
-  router.put('/update/:id', (req, res) => {
+  router.put('/update/:id', isAuthenticated, (req, res) => {
     const restaurantId = req.params.id;
     const { name, capacity, price, description, category, city, postcode, image } = req.body;
     Restaurant.findByIdAndUpdate(restaurantId, {
@@ -125,7 +126,7 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     });
 });
 
-router.delete("/delete/:id", (req, res) => {
+router.delete("/delete/:id", isAuthenticated, (req, res) => {
   const restaurantId = req.params.id;
   Restaurant.findByIdAndDelete(restaurantId)
     .then((deletedRestaurant) => {

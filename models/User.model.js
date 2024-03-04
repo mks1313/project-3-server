@@ -45,6 +45,14 @@ const userSchema = new Schema(
     favorites: [{
       type: Schema.Types.ObjectId,
       ref: "Restaurant",
+    }],
+    comments: [{
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    }],
+    ratings: [{
+      type: Schema.Types.ObjectId,
+      ref: "Rating",
     }]
   },
   
