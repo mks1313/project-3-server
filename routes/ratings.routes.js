@@ -4,7 +4,7 @@ const Rating = require("../models/Rating.model");
 const Restaurant = require("../models/Restaurant.model");
 const User = require("../models/User.model");
 
-// GET: Obtiene todas las valoraciones de un restaurante específico
+
 router.get("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
   
