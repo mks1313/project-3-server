@@ -4,7 +4,7 @@ const Restaurant = require("../models/Restaurant.model");
 const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
-const User = require("../models/User.model");
+
 
 router.get("/read", (req, res) => {
   const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
@@ -42,11 +42,10 @@ router.get("/read/:id", (req, res, next) => {
 
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post("/create", fileUploader.single("image"), (req, res) => {
-  const owner = req.payload._id;
+  const owner = req.payload;
   const {
     name,
     capacity,
-    location,
     address,
     price,
     description,
@@ -66,7 +65,6 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
   Restaurant.create({
     name: req.body.name,
     capacity: req.body.capacity,
-    location: req.body.location,
     address: { street, number, city, postcode },
     price: req.body.price,
     description: req.body.description,
