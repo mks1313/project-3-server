@@ -19,8 +19,8 @@ router.get("/:restaurantId", (req, res) => {
 
       const totalRatings = ratings.length;
       const totalScore = ratings.reduce((acc, rating) => acc + rating.value, 0);
-      const averageRating = totalScore / totalRatings;
-
+      const averageRating = totalRatings > 0 ? totalScore / totalRatings : null;
+      console.log(averageRating);
       res.status(200).json({
         ratings,
         totalRatings,
@@ -35,8 +35,8 @@ router.get("/:restaurantId", (req, res) => {
 // POST: Crea una nueva valoración
 router.post("/rate", (req, res) => {
   const { value, restaurant } = req.body;
-  const authorId = req.payload; 
-   console.log(authorId);
+  const authorId = req.payload;
+
   Rating.findOne({ author: authorId, restaurant: restaurant })
     .then((existingRating) => {
       if (existingRating) {
@@ -44,24 +44,21 @@ router.post("/rate", (req, res) => {
       } else {
         Rating.create({ author: authorId, value, restaurant })
           .then((newRating) => {
-            Restaurant.findByIdAndUpdate(
-              restaurant,
-              { $push: { ratings: newRating._id } },
-              { new: true }
-            )
+            // Agregar el nuevo rating al restaurante
+            Promise.all([
+              Restaurant.findByIdAndUpdate(
+                restaurant,
+                { $push: { ratings: newRating._id }, $addToSet: { ratedByUsers: authorId } },
+                { new: true }
+              ),
+              User.findByIdAndUpdate(
+                authorId,
+                { $push: { ratings: newRating._id } },
+                { new: true }
+              ),
+            ])
               .then(() => {
-         
-                User.findByIdAndUpdate(
-                  authorId,
-                  { $push: { ratings: newRating._id } },
-                  { new: true }
-                )
-                  .then(() => {
-                    res.status(201).json(newRating);
-                  })
-                  .catch((error) => {
-                    res.status(500).json({ message: error.message });
-                  });
+                res.status(201).json(newRating);
               })
               .catch((error) => {
                 res.status(500).json({ message: error.message });
@@ -76,6 +73,7 @@ router.post("/rate", (req, res) => {
       res.status(500).json({ message: error.message });
     });
 });
+
 
 
 // PUT: Actualiza una valoración existente
