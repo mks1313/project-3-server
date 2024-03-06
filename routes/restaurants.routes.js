@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Restaurant = require("../models/Restaurant.model");
 const fileUploader = require("../config/cloudinary.config");
+const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 
 router.get("/read", (req, res) => {
-  const { q } = req.query; 
-  const query = q ? { name: { $regex: new RegExp(q, "i") } } : {}; 
+  const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
+  const query = q ? { name: { $regex: new RegExp(q, "i") } } : {}; // Crear la consulta dinámica
 
   Restaurant.find(query)
     .then((restaurants) => {
@@ -23,9 +24,6 @@ router.get("/read/:id", (req, res, next) => {
 
   Restaurant.findById(restaurantId)
     .populate("owner", "_id")
-    // .populate("comments")
-    // .populate("ratings")
-    
     .then((restaurant) => {
       if (!restaurant) {
         return res.status(404).json({ message: "Restaurante no encontrado" });
@@ -61,31 +59,29 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     openingHours,
   } = req.body;
 
-  console.log(req.body);
+  //console.log(req.body);
 
   // Crear el restaurante
   Restaurant.create({
     name: req.body.name,
     capacity: req.body.capacity,
-    address: { street, number, city, postcode },
+    address: { ...address },
     price: req.body.price,
     description: req.body.description,
-    category: req.body.category,
-    city: req.body.city,
-    postcode: req.body.postcode,
+    category: req.body.category,    
     image: req.file ? req.file.path : undefined,
     phone: req.body.phone,
     openingHours: req.body.openingHours,
-    owner: owner,
+    owner: owner._id,
   })
     .then((newRestaurant) => {
       const restaurantId = newRestaurant._id;
- 
+      // Asociar el nuevo restaurante con el usuario propietario y actualizar el usuario
       User.findByIdAndUpdate(
         owner,
         {
-          $addToSet: { restaurant: restaurantId },
-          $set: { isOwner: true }, 
+          $addToSet: { restaurant: restaurantId }, // Agregar el ID del restaurante a la lista de restaurantes del usuario
+          $set: { isOwner: true }, // Actualizar el campo isOwner a true si no lo era antes
         },
         { new: true }
       )

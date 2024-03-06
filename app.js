@@ -28,7 +28,7 @@ const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
 const restaurantsRoutes = require("./routes/restaurants.routes");
-app.use("/restaurants", restaurantsRoutes);
+app.use("/restaurants", isAuthenticated, restaurantsRoutes);
 
 const usersRoutes = require("./routes/users.routes");
 app.use("/users", isAuthenticated, usersRoutes);
