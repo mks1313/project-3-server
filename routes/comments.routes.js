@@ -9,6 +9,7 @@ router.get("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
 
   Comment.find({ restaurant: restaurantId })
+    .populate("author")
     .then((comments) => {
       res.status(200).json(comments);
     })
@@ -33,6 +34,7 @@ router.post("/create", (req, res) => {
               Restaurant.findByIdAndUpdate(restaurant, {
                 $push: { comments: newComment._id }, 
                 $addToSet: { commentedByUsers: authorId }, 
+                
               }),
               User.findByIdAndUpdate(authorId, {
                 $push: { comments: newComment._id }, 
