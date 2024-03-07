@@ -59,7 +59,7 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     openingHours,
   } = req.body;
 
-  //console.log(req.body);
+  console.log(req.body);
 
   // Crear el restaurante
   Restaurant.create({
