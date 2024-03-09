@@ -9,7 +9,7 @@ router.get("/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
 
   Comment.find({ restaurant: restaurantId })
-    .populate("author")
+    // .populate("author")
     .then((comments) => {
       res.status(200).json(comments);
     })
