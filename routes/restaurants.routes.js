@@ -4,7 +4,7 @@ const Restaurant = require("../models/Restaurant.model");
 const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
-
+const { default: mongoose } = require("mongoose");
 
 router.get("/read", (req, res) => {
   const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
@@ -40,6 +40,28 @@ router.get("/read/:id", (req, res, next) => {
     });
 });
 
+router.post("/upload", fileUploader.single("image"), (req, res) => {
+  // if (!req.file) {
+  //   next(new Error("No file uploaded!"));
+  //   return;
+  // }
+
+  // const { projectId } = req.params;
+  const newRestaurant = { ...req.body };
+
+  // if (!mongoose.Types.ObjectId.isValid(projectId)) {
+  //   res.status(400).json({ message: "Specified id is not valid" });
+  //   return;
+  // }
+
+  if (req.hasOwnProperty("file")) {
+    newRestaurant.image = req.file.path;
+    res.json({ fileURlImage: req.file.path });
+  }
+  // console.log(newRestaurant);
+  return;
+});
+
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
 router.post("/create", fileUploader.single("image"), (req, res) => {
   const owner = req.payload;
@@ -68,7 +90,7 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     address: { ...address },
     price: req.body.price,
     description: req.body.description,
-    category: req.body.category,    
+    category: req.body.category,
     image: req.file ? req.file.path : undefined,
     phone: req.body.phone,
     openingHours: req.body.openingHours,
