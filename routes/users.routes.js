@@ -21,15 +21,19 @@ router.get('/profile', (req, res, next) => {
 
 
 
-router.put('/profile/update', (req, res, next) => {
+router.post('/profile/update', fileUploader.single("image"), (req, res, next) => {
     const userId = req.payload._id; 
-    const { name, email, newPassword, confirmPassword, birthday,image, isOwner, sex } = req.body;
-
-    if (newPassword && newPassword !== confirmPassword) {
-        return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
+    const { name, email, newPassword, confirmPassword, birthday, isOwner, sex } = req.body;
+    
+    
+    // if (newPassword && newPassword !== confirmPassword) {
+    //     return res.status(400).json({ message: 'Passwords do not match' });
+    // }
+    
     const updateFields = {};
+    if (req.hasOwnProperty('file') ) {
+        updateFields.profileImage = req.file.path;
+    }
     
     if (name) updateFields.name = name;
     if (email) updateFields.email = email;
@@ -37,12 +41,15 @@ router.put('/profile/update', (req, res, next) => {
     if (isOwner !== undefined) updateFields.isOwner = isOwner;
     if (sex) updateFields.sex = sex;
     if (newPassword) updateFields.password = newPassword;
-    if (!image) {
-        updateFields.profileImage = User.schema.obj.profileImage.default; 
-    }
+    // if (!image) {
+    //     updateFields.profileImage = User.schema.obj.profileImage.default; 
+    // }
 
-    User.findByIdAndUpdate(userId, updateFields)
+    console.log(updateFields);
+
+    User.findByIdAndUpdate(userId, updateFields, { new: true }) 
         .then(updatedUser => {
+            console.log(updatedUser);
             if (!updatedUser) {
                 return res.status(404).json({ message: 'User not found' });
             }

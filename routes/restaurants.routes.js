@@ -58,7 +58,7 @@ router.post("/upload", fileUploader.single("image"), (req, res) => {
     newRestaurant.image = req.file.path;
     res.json({ fileURlImage: req.file.path });
   }
-  // console.log(newRestaurant);
+  
   return;
 });
 
