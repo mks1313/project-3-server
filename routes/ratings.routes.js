@@ -11,11 +11,11 @@ router.get("/:restaurantId", (req, res) => {
   Rating.find({ restaurant: restaurantId })
     .then((ratings) => {
    
-      if (!ratings || ratings.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No ratings found for this restaurant" });
-      }
+      // if (!ratings || ratings.length === 0) {
+      //   return res
+      //     .status(404)
+      //     .json({ message: "No ratings found for this restaurant" });
+      // }
 
       const totalRatings = ratings.length;
       const totalScore = ratings.reduce((acc, rating) => acc + rating.value, 0);

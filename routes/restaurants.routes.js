@@ -41,7 +41,9 @@ router.get("/read/:id", (req, res, next) => {
 });
 
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
-router.post("/create", fileUploader.single("image"), (req, res) => {
+router.post("/create", isAuthenticated, fileUploader.single("image"), (req, res) => {
+  console.log(req.body); // Verifica los datos del formulario
+  console.log(req.file);
   const owner = req.payload;
   const {
     name,
@@ -56,10 +58,8 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     number,
     postcode,
     phone,
-    openingHours,
   } = req.body;
 
-  console.log(req.body);
 
   // Crear el restaurante
   Restaurant.create({
@@ -71,11 +71,11 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     category: req.body.category,    
     image: req.file ? req.file.path : undefined,
     phone: req.body.phone,
-    openingHours: req.body.openingHours,
     owner: owner._id,
   })
     .then((newRestaurant) => {
       const restaurantId = newRestaurant._id;
+      console.log(newRestaurant);
       // Asociar el nuevo restaurante con el usuario propietario y actualizar el usuario
       User.findByIdAndUpdate(
         owner,
@@ -103,7 +103,7 @@ router.post("/create", fileUploader.single("image"), (req, res) => {
     });
 });
 
-router.put("/update/:id", isAuthenticated, (req, res) => {
+router.put("/update/:id",  isAuthenticated, (req, res) => {
   const restaurantId = req.params.id;
   const {
     name,
@@ -141,7 +141,7 @@ router.put("/update/:id", isAuthenticated, (req, res) => {
         .json({ message: "Error al actualizar el restaurante", error });
     });
 });
-router.put("/update/:id", (req, res) => {
+router.put("/update/:id", isAuthenticated, (req, res) => {
   const restaurantId = req.params.id;
   const {
     name,
