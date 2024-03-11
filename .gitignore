@@ -21,3 +21,4 @@ ehthumbs.db
 
 # VS Code
 .vscode/*
+.vercel
