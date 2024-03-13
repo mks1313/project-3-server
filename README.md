@@ -7,7 +7,7 @@
 ## url for slides
 
 
-# | Ruta                      | Descripción                                            | Modelo      |
+| Ruta                      | Descripción                                            | Modelo      |
 |---------------------------|--------------------------------------------------------|-------------|
 | /api/users/register       | Registra un nuevo usuario                              | User        |
 | /api/users/login          | Inicia sesión para un usuario existente                | User        |
