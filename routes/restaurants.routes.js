@@ -58,12 +58,12 @@ router.post("/upload", fileUploader.single("image"), (req, res) => {
     newRestaurant.image = req.file.path;
     res.json({ fileURlImage: req.file.path });
   }
-  
+  // console.log(newRestaurant);
   return;
 });
 
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
-router.post("/create", isAuthenticated, (req, res) => {
+router.post("/create", isAuthenticated, fileUploader.single("image"), (req, res) => {
   console.log(req.body); // Verifica los datos del formulario
   console.log(req.file);
   const owner = req.payload;
@@ -91,7 +91,7 @@ router.post("/create", isAuthenticated, (req, res) => {
     price: req.body.price,
     description: req.body.description,
     category: req.body.category,
-    image: req.body.image,
+    image: req.file ? req.file.path : undefined,
     phone: req.body.phone,
     owner: owner._id,
   })
