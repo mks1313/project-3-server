@@ -9,9 +9,16 @@ const { default: mongoose } = require("mongoose");
 router.get("/read", (req, res) => {
   const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
   const query = q ? { name: { $regex: new RegExp(q, "i") } } : {}; // Crear la consulta dinámica
-
+//TODO terminar rating, obtener promedio y renderizar
   Restaurant.find(query)
+    .populate("ratings")
     .then((restaurants) => {
+
+      restaurants.forEach((restaurant) => {
+        const totalRatings = restaurant.ratings.length;
+        const totalScore = restaurant.ratings.reduce((acc, rating) => acc + rating.value, 0);
+        restaurant.averageRating = totalRatings > 0 ? totalScore / totalRatings : null;
+      });
       res.status(200).json(restaurants);
     })
     .catch((error) => {
@@ -63,69 +70,73 @@ router.post("/upload", fileUploader.single("image"), (req, res) => {
 });
 
 // ruta final localhost:5005/restaurants/create, importante recordar la ruta!!!!!!!!!!!
-router.post("/create", isAuthenticated, fileUploader.single("image"), (req, res) => {
-  console.log(req.body); // Verifica los datos del formulario
-  console.log(req.file);
-  const owner = req.payload;
-  const {
-    name,
-    capacity,
-    address,
-    price,
-    description,
-    category,
-    image,
-    city,
-    street,
-    number,
-    postcode,
-    phone,
-  } = req.body;
+router.post(
+  "/create",
+  isAuthenticated,
+  fileUploader.single("image"),
+  (req, res) => {
+    console.log(req.body); // Verifica los datos del formulario
+    console.log(req.file);
+    const owner = req.payload;
+    const {
+      name,
+      capacity,
+      address,
+      price,
+      description,
+      category,
+      image,
+      city,
+      street,
+      number,
+      postcode,
+      phone,
+    } = req.body;
 
-
-  // Crear el restaurante
-  Restaurant.create({
-    name: req.body.name,
-    capacity: req.body.capacity,
-    address: { ...address },
-    price: req.body.price,
-    description: req.body.description,
-    category: req.body.category,
-    image: req.file ? req.file.path : undefined,
-    phone: req.body.phone,
-    owner: owner._id,
-  })
-    .then((newRestaurant) => {
-      const restaurantId = newRestaurant._id;
-      console.log(newRestaurant);
-      // Asociar el nuevo restaurante con el usuario propietario y actualizar el usuario
-      User.findByIdAndUpdate(
-        owner,
-        {
-          $addToSet: { restaurant: restaurantId }, // Agregar el ID del restaurante a la lista de restaurantes del usuario
-          $set: { isOwner: true }, // Actualizar el campo isOwner a true si no lo era antes
-        },
-        { new: true }
-      )
-        .then((updatedUser) => {
-          if (!updatedUser) {
-            return res.status(404).json({ message: "User not found" });
-          }
-          res.status(201).json(newRestaurant);
-        })
-        .catch((error) => {
-          res.status(500).json({
-            message: "Error updating user with new restaurant",
-            error,
-          });
-        });
+    // Crear el restaurante
+    Restaurant.create({
+      name: req.body.name,
+      capacity: req.body.capacity,
+      address: { ...address },
+      price: req.body.price,
+      description: req.body.description,
+      category: req.body.category,
+      image: req.file ? req.file.path : undefined,
+      phone: req.body.phone,
+      owner: owner._id,
     })
-    .catch((error) => {
-      res.status(400).json({ message: error.message });
-    });
-});
+      .then((newRestaurant) => {
+        const restaurantId = newRestaurant._id;
+        console.log(newRestaurant);
+        // Asociar el nuevo restaurante con el usuario propietario y actualizar el usuario
+        User.findByIdAndUpdate(
+          owner,
+          {
+            $addToSet: { restaurant: restaurantId }, // Agregar el ID del restaurante a la lista de restaurantes del usuario
+            $set: { isOwner: true }, // Actualizar el campo isOwner a true si no lo era antes
+          },
+          { new: true }
+        )
+          .then((updatedUser) => {
+            if (!updatedUser) {
+              return res.status(404).json({ message: "User not found" });
+            }
+            res.status(201).json(newRestaurant);
+          })
+          .catch((error) => {
+            res.status(500).json({
+              message: "Error updating user with new restaurant",
+              error,
+            });
+          });
+      })
+      .catch((error) => {
+        res.status(400).json({ message: error.message });
+      });
+  }
+);
 
-router.put("/update/:id",  isAuthenticated, (req, res) => {
+router.put("/update/:id", isAuthenticated, (req, res) => {
   const restaurantId = req.params.id;
   const {
     name,

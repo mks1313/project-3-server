@@ -1,6 +1,4 @@
-# This my mern project!
-
-## aqui un atabla con las rutas del back y los modelos.
+# This my mern project "Nyam Nyam".
 
 ## url: [project-3-client.vercel.app](https://project-3-client.vercel.app/)
 

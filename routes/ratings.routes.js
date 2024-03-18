@@ -20,6 +20,7 @@ router.get("/:restaurantId", (req, res) => {
       const totalRatings = ratings.length;
       const totalScore = ratings.reduce((acc, rating) => acc + rating.value, 0);
       const averageRating = totalRatings > 0 ? totalScore / totalRatings : null;
+      
       res.status(200).json({
         ratings,
         totalRatings,
