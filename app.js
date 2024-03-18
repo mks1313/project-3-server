@@ -25,25 +25,25 @@ const indexRoutes = require("./routes/index.routes");
 app.use("/api", indexRoutes);
 
 const authRoutes = require("./routes/auth.routes");
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 const restaurantsRoutes = require("./routes/restaurants.routes");
-app.use("/restaurants", restaurantsRoutes);
+app.use("/api/restaurants", restaurantsRoutes);
 
 const usersRoutes = require("./routes/users.routes");
-app.use("/users", isAuthenticated, usersRoutes);
+app.use("/api/users", isAuthenticated, usersRoutes);
 
 const ratingsRoutes = require("./routes/ratings.routes");
-app.use("/ratings", isAuthenticated, ratingsRoutes);
+app.use("/api/ratings", isAuthenticated, ratingsRoutes);
 
 const commentsRoutes = require("./routes/comments.routes");
-app.use("/comments", isAuthenticated, commentsRoutes);
+app.use("/api/comments", isAuthenticated, commentsRoutes);
 
 const menusRoutes = require("./routes/menus.routes");
-app.use("/menus", isAuthenticated, menusRoutes);
+app.use("/api/menus", isAuthenticated, menusRoutes);
 
 const favoritesRoutes = require("./routes/favorites.routes");
-app.use("/favorites", isAuthenticated, favoritesRoutes);
+app.use("/api/favorites", isAuthenticated, favoritesRoutes);
 
 
 
