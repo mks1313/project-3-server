@@ -136,44 +136,44 @@ router.post(
   }
 );
 
-router.put("/update/:id", isAuthenticated, (req, res) => {
-  const restaurantId = req.params.id;
-  const {
-    name,
-    capacity,
-    price,
-    description,
-    category,
-    city,
-    postcode,
-    image,
-  } = req.body;
-  Restaurant.findByIdAndUpdate(
-    restaurantId,
-    {
-      name,
-      capacity,
-      price,
-      description,
-      category,
-      city,
-      postcode,
-      image,
-    },
-    { new: true }
-  )
-    .then((updatedRestaurant) => {
-      if (!updatedRestaurant) {
-        return res.status(404).json({ message: "Restaurante no encontrado" });
-      }
-      res.status(200).json(updatedRestaurant);
-    })
-    .catch((error) => {
-      res
-        .status(500)
-        .json({ message: "Error al actualizar el restaurante", error });
-    });
-});
+// router.put("/update/:id", isAuthenticated, (req, res) => {
+//   const restaurantId = req.params.id;
+//   const {
+//     name,
+//     capacity,
+//     price,
+//     description,
+//     category,
+//     city,
+//     postcode,
+//     image,
+//   } = req.body;
+//   Restaurant.findByIdAndUpdate(
+//     restaurantId,
+//     {
+//       name,
+//       capacity,
+//       price,
+//       description,
+//       category,
+//       city,
+//       postcode,
+//       image,
+//     },
+//     { new: true }
+//   )
+//     .then((updatedRestaurant) => {
+//       if (!updatedRestaurant) {
+//         return res.status(404).json({ message: "Restaurante no encontrado" });
+//       }
+//       res.status(200).json(updatedRestaurant);
+//     })
+//     .catch((error) => {
+//       res
+//         .status(500)
+//         .json({ message: "Error al actualizar el restaurante", error });
+//     });
+// });
 router.put("/update/:id", isAuthenticated, (req, res) => {
   const restaurantId = req.params.id;
   const {
