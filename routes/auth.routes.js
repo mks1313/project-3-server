@@ -9,7 +9,7 @@ const Restaurant = require("../models/Restaurant.model.js");
 
 
 
-router.post('/api/signup', (req, res, next) => {
+router.post('/signup', (req, res, next) => {
     const { email, password, name } = req.body;
    
     if (email === '' || password === '' || name === '') {
@@ -58,7 +58,7 @@ router.post('/api/signup', (req, res, next) => {
     });
   });
 
-router.post('/api/login', (req, res, next) => {
+router.post('/login', (req, res, next) => {
     const { email, password } = req.body;
   
     if (email === '' || password === '') {
@@ -93,7 +93,7 @@ router.post('/api/login', (req, res, next) => {
       .catch(err => res.status(500).json({ message: "Internal Server Error" }));
   });
   
-  router.get('/api/verify', isAuthenticated, (req, res, next) => {       // <== CREATE NEW ROUTE
+  router.get('/verify', isAuthenticated, (req, res, next) => {       // <== CREATE NEW ROUTE
     // If JWT token is valid the payload gets decoded by the 
     // isAuthenticated middleware and made available on `req.payload` 
     console.log(`req.payload`, req.payload);
