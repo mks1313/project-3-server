@@ -5,7 +5,7 @@ const fileUploader = require("../config/cloudinary.config");
 const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const { default: mongoose } = require("mongoose");
-
+//TODO hacer el codigo optimizado de todo repo
 router.get("/read", (req, res) => {
   const { q } = req.query; // Obtener el parámetro de consulta "q" para la búsqueda
   const query = q ? { name: { $regex: new RegExp(q, "i") } } : {}; // Crear la consulta dinámica
