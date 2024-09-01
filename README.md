@@ -1,7 +1,6 @@
+# 🍽️ Restaurant Web Application Backend - MERN Project "Nyam Nyam"
 
-# 🍽️ Restaurant Web Application Backend mern project "Nyam Nyam".
-
-This is the backend component of the Restaurant Web Application project. It is built using Express.js and provides the API and business logic required for managing restaurants, users, and reviews.
+This is the backend component of the Restaurant Web Application project, named "Nyam Nyam." It is built using Express.js and provides the API and business logic required for managing restaurants, users, and reviews.
 
 ## 🌟 Project Overview
 
@@ -34,6 +33,7 @@ Make sure you have the following installed:
    ```bash
    git clone [URL_DEL_REPOSITORIO_BACKEND]
 
+
 2. **Navigate to the project directory:**
 
     ```bash
@@ -57,9 +57,8 @@ Make sure you have the following installed:
  5. **Run the server:**
 
     ```bash
+    
      npm start
-
-
 
 
 **API Endpoints**
@@ -67,22 +66,22 @@ Make sure you have the following installed:
 Use Postman to test the following routes:
 
 
-| Ruta                      | Descripción                                            | Modelo      |
-|---------------------------|--------------------------------------------------------|-------------|
-| /api/users/signup         | Registra un nuevo usuario                              | User        |  
-| /api/users/login          | Inicia sesión para un usuario existente                | User        |
-| /api/users/profile        | Obtiene el perfil del usuario autenticado              | User        |
-| /api/users/profile/update | Actualiza la información del perfil del usuario        | User        | 
-| /api/users/profile/delete | Elimina el perfil del usuario y todos sus datos        | User        |
-| /api/restaurants/read     | Obtiene la lista de todos los restaurantes             | Restaurant  |
-| /api/restaurants/:id      | Obtiene los detalles de un restaurante específico      | Restaurant  |
-| /api/restaurants/create   | Crea un nuevo restaurante                              | Restaurant  |
-| /api/restaurants/edit/:id | Edita la información de un restaurante                 | Restaurant  | 
-| /api/restaurants/delete/:id | Elimina un restaurante                               | Restaurant  |
-| /api/ratings/:restaurantId| Obtiene las valoraciones de un restaurante             | Rating      |
-| /api/ratings/rate         | Agrega una valoración a un restaurante específico      | Rating      |
-| /api/comments/:restaurantId| Obtiene los comentarios de un restaurante             | Comment     |
-| /api/comments/create      | Agrega un comentario a un restaurante específico       | Comment     |
+| Route                       | Descriptión                                            | Model       |
+|-----------------------------|--------------------------------------------------------|-------------|
+| /api/users/signup           | Register a new user                                    | User        |  
+| /api/users/login            | Log in an existing user                                | User        |
+| /api/users/profile          | Get the profile of the authenticated user              | User        |
+| /api/users/profile/update   | Update user profile information                        | User        | 
+| /api/users/profile/delete   | Delete user profile and all associated data            | User        |
+| /api/restaurants/read       | Get the list of all restaurants                        | Restaurant  |
+| /api/restaurants/:id        | Get details of a specific restaurant                   | Restaurant  |
+| /api/restaurants/create     | Create a new restaurant                                | Restaurant  |
+| /api/restaurants/edit/:id   | Edit a restaurant's information                        | Restaurant  | 
+| /api/restaurants/delete/:id | Delete a restaurant                                    | Restaurant  |
+| /api/ratings/:restaurantId  | Get ratings for a specific restaurant                  | Rating      |
+| /api/ratings/rate           | Add a rating to a specific restaurant                  | Rating      |
+| /api/comments/:restaurantId | Get comments for a specific restaurant                 | Comment     |
+| /api/comments/create        | Add a comment to a specific restaurant                 | Comment     |
 
 
 📦 **Deployment**
@@ -95,8 +94,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 
 👤 Author
-
-Maksim Georgiev Marinov - mks1313
+Maksim Georgiev Marinov - [mks1313](https://github.com/mks1313)
 
 📧 Contact
 
