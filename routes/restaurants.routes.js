@@ -6,19 +6,20 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const { body, param, query, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
-//TODO ver la seguridad y pensar como mejorar contra los ataques
-// Helper para escapar caracteres de regex y evitar inyecciones.
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapa caracteres especiales
-}
+const escapeStringRegexp = import("escape-string-regexp"); // Importar la librería para escapar expresiones regulares
 
-// Middleware de validación de entradas
+// Middleware de validación de errores
 function handleValidationErrors(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
   next();
+}
+
+// Middleware para escapar caracteres especiales y evitar inyecciones de regex
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapa caracteres especiales
 }
 
 // GET: Lista de restaurantes con búsqueda y promedio de ratings
@@ -28,13 +29,13 @@ router.get("/read", [
   try {
     const { q } = req.query;
 
-    // Validar entrada para evitar inyecciones o caracteres no permitidos
+    // Validación de entrada para evitar caracteres no permitidos
     if (q && /[^a-zA-Z0-9 ]/g.test(q)) {
       return res.status(400).json({ message: "El término de búsqueda contiene caracteres no permitidos." });
     }
 
-    // Construir la consulta de búsqueda de forma segura
-    const query = q ? { name: { $regex: new RegExp(escapeRegExp(q), "i") } } : {};
+    // Usar escapeStringRegexp para evitar inyecciones de regex
+    const query = q ? { name: { $regex: new RegExp(escapeStringRegexp(q), "i") } } : {};
 
     const restaurants = await Restaurant.find(query).populate("ratings");
 
@@ -52,7 +53,7 @@ router.get("/read", [
   }
 });
 
-// GET: Detalle de un restaurante por ID.
+// GET: Detalle de un restaurante por ID
 router.get("/read/:id", [
   param('id').isMongoId().withMessage('ID no válido.')
 ], handleValidationErrors, async (req, res) => {
@@ -156,7 +157,8 @@ router.put("/update/:id", [
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-// DELETE: Eliminar un restaurante.
+
+// DELETE: Eliminar un restaurante
 router.delete("/delete/:id", [
   isAuthenticated,
   param('id').isMongoId().withMessage('ID no válido.')
@@ -178,4 +180,5 @@ router.delete("/delete/:id", [
 });
 
 module.exports = router;
+
 
