@@ -156,7 +156,6 @@ router.put("/update/:id", [
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
 // DELETE: Eliminar un restaurante.
 router.delete("/delete/:id", [
   isAuthenticated,
@@ -179,5 +178,4 @@ router.delete("/delete/:id", [
 });
 
 module.exports = router;
-
 
