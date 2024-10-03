@@ -27,10 +27,17 @@ router.get("/read", [
 ], handleValidationErrors, async (req, res) => {
   try {
     const { q } = req.query;
+
+    // Validar entrada para evitar inyecciones o caracteres no permitidos
+    if (q && /[^a-zA-Z0-9 ]/g.test(q)) {
+      return res.status(400).json({ message: "El término de búsqueda contiene caracteres no permitidos." });
+    }
+
+    // Construir la consulta de búsqueda de forma segura
     const query = q ? { name: { $regex: new RegExp(escapeRegExp(q), "i") } } : {};
 
     const restaurants = await Restaurant.find(query).populate("ratings");
-    
+
     const updatedRestaurants = restaurants.map((restaurant) => {
       const totalRatings = restaurant.ratings.length;
       const totalScore = restaurant.ratings.reduce((acc, rating) => acc + rating.value, 0);
@@ -40,6 +47,7 @@ router.get("/read", [
 
     res.status(200).json(updatedRestaurants);
   } catch (error) {
+    console.error("Error al obtener restaurantes:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -62,11 +70,12 @@ router.get("/read/:id", [
       owner: restaurant.owner._id,
     });
   } catch (error) {
+    console.error("Error al obtener el restaurante:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-// POST: Subir imagen!! modificado y simplificado
+// POST: Subir imagen (Simplificado y seguro)
 router.post("/upload", fileUploader.single("image"), (req, res) => {
   if (req.file) {
     res.status(200).json({ fileURL: req.file.path });
@@ -86,6 +95,11 @@ router.post("/create", [
   try {
     const owner = req.payload;
     const { name, capacity, address, price, description, category, phone } = req.body;
+
+    // Validación de datos antes de la creación
+    if (!name || !capacity || !price || !phone) {
+      return res.status(400).json({ message: "Faltan datos obligatorios para crear el restaurante" });
+    }
 
     const newRestaurant = await Restaurant.create({
       name,
@@ -108,12 +122,12 @@ router.post("/create", [
 
     res.status(201).json(newRestaurant);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error al crear restaurante:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 // PUT: Actualizar un restaurante
-// PUT: Actualizar un restaurante, incluida la imagen
 router.put("/update/:id", [
   isAuthenticated,
   param('id').isMongoId().withMessage('ID no válido.'),
@@ -138,11 +152,10 @@ router.put("/update/:id", [
 
     res.status(200).json(updatedRestaurant);
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar restaurante:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
 
 // DELETE: Eliminar un restaurante
 router.delete("/delete/:id", [
@@ -160,9 +173,11 @@ router.delete("/delete/:id", [
 
     res.status(200).json({ message: "Restaurante eliminado exitosamente" });
   } catch (error) {
+    console.error("Error al eliminar restaurante:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 module.exports = router;
+
 
