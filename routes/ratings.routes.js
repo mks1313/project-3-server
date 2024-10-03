@@ -5,7 +5,7 @@ const Restaurant = require("../models/Restaurant.model");
 const User = require("../models/User.model");
 const mongoose = require("mongoose");
 
-// Middleware para validar ObjectId
+// Middleware to validate ObjectId
 function validateObjectId(req, res, next) {
   const { restaurantId, ratingId } = req.params;
   if (restaurantId && !mongoose.Types.ObjectId.isValid(restaurantId)) {
@@ -17,12 +17,26 @@ function validateObjectId(req, res, next) {
   next();
 }
 
-// Middleware para validar los valores de la valoración
+// Middleware to validate and sanitize the rating value
 function validateRatingValue(req, res, next) {
   const { value } = req.body;
+  
   if (value === undefined || typeof value !== 'number' || value < 1 || value > 5) {
     return res.status(400).json({ message: "El valor de la valoración debe ser un número entre 1 y 5" });
   }
+  
+  next();
+}
+
+// Middleware to sanitize user inputs
+function sanitizeInputs(req, res, next) {
+  const { user, city, restaurant, ratingId } = req.body;
+
+  if (user) req.body.user = String(user).trim();
+  if (city) req.body.city = String(city).trim();
+  if (restaurant) req.body.restaurant = mongoose.Types.ObjectId.isValid(restaurant) ? restaurant : null;
+  if (ratingId) req.body.ratingId = mongoose.Types.ObjectId.isValid(ratingId) ? ratingId : null;
+  
   next();
 }
 
@@ -31,10 +45,10 @@ router.use(validateObjectId);
 // GET: Obtener valoraciones de un restaurante
 router.get("/:restaurantId", async (req, res) => {
   const { restaurantId } = req.params;
-  
+
   try {
     const ratings = await Rating.find({ restaurant: restaurantId });
-    
+
     if (!ratings || ratings.length === 0) {
       return res.status(404).json({ message: "No se encontraron valoraciones para este restaurante" });
     }
@@ -42,7 +56,7 @@ router.get("/:restaurantId", async (req, res) => {
     const totalRatings = ratings.length;
     const totalScore = ratings.reduce((acc, rating) => acc + rating.value, 0);
     const averageRating = totalRatings > 0 ? totalScore / totalRatings : null;
-    
+
     res.status(200).json({
       ratings,
       totalRatings,
@@ -54,7 +68,7 @@ router.get("/:restaurantId", async (req, res) => {
 });
 
 // POST: Crea una nueva valoración
-router.post("/rate", validateRatingValue, async (req, res) => {
+router.post("/rate", validateRatingValue, sanitizeInputs, async (req, res) => {
   const { value, restaurant } = req.body;
   const authorId = req.payload; // Asegúrate de que esto viene de un token o sesión validada
 
@@ -88,7 +102,7 @@ router.post("/rate", validateRatingValue, async (req, res) => {
 });
 
 // PUT: Actualiza una valoración existente
-router.put("/update/:ratingId", validateRatingValue, async (req, res) => {
+router.put("/update/:ratingId", validateRatingValue, sanitizeInputs, async (req, res) => {
   const { value } = req.body;
   const { ratingId } = req.params;
 
@@ -134,6 +148,7 @@ router.delete("/delete/:ratingId", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
