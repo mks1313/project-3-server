@@ -6,7 +6,7 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const { body, param, query, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
-
+//TODO ver la seguridad y pensar como mejorar contra los ataques
 // Helper para escapar caracteres de regex y evitar inyecciones.
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapa caracteres especiales
@@ -157,7 +157,7 @@ router.put("/update/:id", [
   }
 });
 
-// DELETE: Eliminar un restaurante
+// DELETE: Eliminar un restaurante.
 router.delete("/delete/:id", [
   isAuthenticated,
   param('id').isMongoId().withMessage('ID no válido.')
