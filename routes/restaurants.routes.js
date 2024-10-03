@@ -7,7 +7,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const { body, param, query, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
-// Helper para escapar caracteres de regex y evitar inyecciones
+// Helper para escapar caracteres de regex y evitar inyecciones.
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapa caracteres especiales
 }
@@ -44,7 +44,7 @@ router.get("/read", [
   }
 });
 
-// GET: Detalle de un restaurante por ID
+// GET: Detalle de un restaurante por ID.
 router.get("/read/:id", [
   param('id').isMongoId().withMessage('ID no válido.')
 ], handleValidationErrors, async (req, res) => {
@@ -66,7 +66,7 @@ router.get("/read/:id", [
   }
 });
 
-// POST: Subir imagen
+// POST: Subir imagen!! modificado y simplificado
 router.post("/upload", fileUploader.single("image"), (req, res) => {
   if (req.file) {
     res.status(200).json({ fileURL: req.file.path });
